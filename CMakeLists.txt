@@ -14,27 +14,50 @@ add_custom_target(etc-link
   exit 0
   )
 
-set(SRC
+set(SRC_GPU
   src/main.cu
   src/kernel.cu
   )
 
-add_executable(gpgpu
-  ${SRC}
+set(SRC_CPU
+  src/main.cc
+  src/kernel.cc
   )
 
-target_include_directories(gpgpu PUBLIC
+add_executable(gpgpu-gpu
+  ${SRC_GPU}
+  )
+
+add_executable(gpgpu-cpu
+  ${SRC_CPU}
+  )
+
+set(INCLUDE_COMMON
   "${PROJECT_SOURCE_DIR}/src/include"
   "${PROJECT_SOURCE_DIR}/extern/image"
   )
 
-# RUN DEBUG TARGET
-add_custom_target(run
-  COMMAND printf %37sOUTPUT%37s\\\\n | tr " " "="
-  COMMAND ./bin/gpgpu etc/data/00.jpg etc/data/result.png
-  COMMAND printf %80s\\\\n | tr " " "="
-  DEPENDS etc-link gpgpu
+target_include_directories(gpgpu-gpu PUBLIC
+  ${INCLUDE_COMMON}
   )
 
+target_include_directories(gpgpu-cpu PUBLIC
+  ${INCLUDE_COMMON}
+  )
 
-set_property(TARGET gpgpu PROPERTY CUDA_SEPARABLE_COMPILATION ON)
+# RUN DEBUG TARGET
+add_custom_target(run-gpu
+  COMMAND printf %37sOUTPUT%37s\\\\n | tr " " "="
+  COMMAND ./bin/gpgpu-gpu etc/data/00.jpg etc/data/result-gpu.png
+  COMMAND printf %80s\\\\n | tr " " "="
+  DEPENDS etc-link gpgpu-gpu
+  )
+
+add_custom_target(run-cpu
+  COMMAND printf %37sOUTPUT%37s\\\\n | tr " " "="
+  COMMAND ./bin/gpgpu-cpu etc/data/00.jpg etc/data/result-cpu.png
+  COMMAND printf %80s\\\\n | tr " " "="
+  DEPENDS etc-link gpgpu-cpu
+  )
+
+set_property(TARGET gpgpu-gpu PROPERTY CUDA_SEPARABLE_COMPILATION ON)

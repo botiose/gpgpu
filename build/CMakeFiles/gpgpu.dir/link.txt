@@ -1,1 +1,0 @@
-/usr/lib/nvidia-cuda-toolkit/bin/g++ CMakeFiles/gpgpu.dir/src/main.cu.o CMakeFiles/gpgpu.dir/src/kernel.cu.o CMakeFiles/gpgpu.dir/cmake_device_link.o -o bin/gpgpu  -lcudadevrt -lcudart_static -lrt -lpthread -ldl  -L"/usr/lib/x86_64-linux-gnu/stubs" -L"/usr/lib/x86_64-linux-gnu"

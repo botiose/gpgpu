@@ -102,6 +102,8 @@ main(int argc, char** argv) {
   cudaDeviceSynchronize();
 
   cudaFree(pooledYDev);
+
+  pooledImageSize = sizeof(uint8_t) * (pooledWidth * pooledHeight);
   
   uint8_t* erodedDev;
   cudaMalloc((void**)&erodedDev, pooledImageSize);
