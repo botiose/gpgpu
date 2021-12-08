@@ -29,9 +29,6 @@ sobelImage(const uint8_t* a,
   int y = threadIdx.y + blockIdx.y * blockDim.y;
 
   if (x > 0 && y > 0 && x < w - 1 && y < h - 1) {
-    int px = x / poolSize;
-    int py = y / poolSize;
-
     int dx =
         abs(-1 * idx(a, w, x - 1, y - 1) + -2 * idx(a, w, x - 1, y) +
             -1 * idx(a, w, x - 1, y + 1) + idx(a, w, x + 1, y - 1) +
@@ -40,6 +37,9 @@ sobelImage(const uint8_t* a,
         abs(idx(a, w, x - 1, y - 1) + 2 * idx(a, w, x, y - 1) +
             idx(a, w, x + 1, y - 1) + -1 * idx(a, w, x - 1, y + 1) +
             -2 * idx(a, w, x, y + 1) + -1 * idx(a, w, x + 1, y + 1));
+
+    int px = x / poolSize;
+    int py = y / poolSize;
 
     atomicAdd(pooledX + px + py * pooledWidth, dx);
     atomicAdd(pooledY + px + py * pooledWidth, dy);
@@ -55,8 +55,8 @@ computeResponse(const uint32_t* pooledY,
   int x = threadIdx.x + blockIdx.x * blockDim.x;
   int y = threadIdx.y + blockIdx.y * blockDim.y;
 
-  int d = *(pooledX + x + y * pooledWidth) / poolSize -
-          *(pooledY + x + y * pooledWidth) / poolSize;
+  int d = *(pooledX + x + y * pooledWidth) / (poolSize * poolSize) -
+          *(pooledY + x + y * pooledWidth) / (poolSize * poolSize);
 
   *(pooledX + x + y * pooledWidth) = d < 0 ? 0 : d;
 }

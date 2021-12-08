@@ -1,4 +1,5 @@
 #include <iostream>
+#include <valgrind/callgrind.h>
 #include <stdint.h>
 
 #define STB_IMAGE_IMPLEMENTATION
@@ -11,12 +12,13 @@
 
 #define POOL_SIZE 3
 #define ERO_KERNEL_WIDTH 6
-#define ERO_KERNEL_HEIGHT 4
-#define DIL_KERNEL_WIDTH 25
+#define ERO_KERNEL_HEIGHT 3
+#define DIL_KERNEL_WIDTH 30
 #define DIL_KERNEL_HEIGHT 15
 
 int
 main(int argc, char** argv) {
+  CALLGRIND_START_INSTRUMENTATION;
   if (argc != 3) {
     std::cerr << "Usage: gpgpu <src-image.jpb> <dst-image.png>" << std::endl;
     exit(1);
@@ -41,7 +43,13 @@ main(int argc, char** argv) {
   memset(pooledX, 0, pooledImageSize);
   memset(pooledY, 0, pooledImageSize);
 
-  sobelImage(gray, width, height, POOL_SIZE, pooledWidth, pooledX, pooledY);
+  sobelImage(gray,
+             width - width % POOL_SIZE,
+             height - height % POOL_SIZE,
+             POOL_SIZE,
+             pooledWidth,
+             pooledX,
+             pooledY);
 
   free(gray);
 
@@ -78,7 +86,14 @@ main(int argc, char** argv) {
   // Threshold the image by 50%.
   threshold(pooledWidth, pooledHeight, maxVal, dilatated);
 
-  stbi_write_png(argv[2], pooledWidth, pooledHeight, 1, dilatated, pooledWidth);
+  uint8_t* result = (uint8_t*)malloc(sizeof(uint8_t) * (pooledWidth * pooledHeight));
+
+  for (int i = 0; i < pooledWidth * pooledHeight; i++) {
+    *(result + i) = (uint8_t)*(dilatated + i);
+  }
+
+  stbi_write_jpg(argv[2], pooledWidth, pooledHeight, 1, dilatated, 100);
 
   free(dilatated);
+  CALLGRIND_STOP_INSTRUMENTATION;
 }

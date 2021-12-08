@@ -1,0 +1,89 @@
+\documentclass[11pt]{article}
+
+% Use the following to compile
+% mkdir tmp
+% pdflatex -aux-directory=tmp -output-directory=tmp --shell-escape notes.tex
+
+% Use the following to compile
+% mkdir tmp
+% pdflatex -aux-directory=tmp -output-directory=tmp --shell-escape notes.tex
+
+% Package use definitions
+\usepackage[top=2.5cm, bottom=2.5cm]{geometry}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{comment}
+\usepackage[outputdir=tmp]{minted}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{listings}
+\usepackage[hidelinks]{hyperref}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{tcolorbox}
+\usepackage{multicol}
+\usepackage{titlesec}
+\usepackage{bbm}
+
+\titleformat{\section}
+            {\large\bfseries}{\thesection.}{2mm}{}
+\titleformat{\subsection}
+            {\large}{\thesubsection}{2mm}{}
+\titleformat{\subsubsection}
+            {\large}{\thesubsubsection}{2mm}{}
+
+% Column Separation
+\setlength{\columnsep}{1cm}
+
+% Settings minted option for the entire document
+\definecolor{LightGray}{rgb}{0.9, 0.9, 0.9}
+\setminted{frame=lines,framesep=2mm,bgcolor=LightGray,linenos,
+  fontsize=\footnotesize, baselinestretch=1.2}
+
+% Start of document
+\begin{document}
+
+% Title page and table of contents setup
+\begin{titlepage}
+    \begin{center}
+      \Huge \textbf{GPGPU}\\
+      \vspace*{1\baselineskip}
+      \huge Barcode Localization
+    \vfill
+    \end{center}
+    \textbf{Abstract}
+    \vfill
+     \tableofcontents
+  \begin{center}
+    \vfill
+    \normalsize \textbf{Paul Adam}\\
+    \normalsize \textbf{Tony George}\\
+    \normalsize \textbf{Thibault Lahoussoy}\\
+    \normalsize \textbf{Mathieu Tammaro}\\
+    \normalsize \textbf{Jose A. Henriquez Roa}\\
+    \vspace*{2\baselineskip} \today \rhead{\today}
+  \end{center}
+\end{titlepage}
+
+\newgeometry{includeheadfoot, left=1.5cm, right=1.5cm, top=1cm, bottom=1cm,
+  headsep=10mm, footskip=15mm}
+% Header and footer setup
+\pagestyle{fancy}
+\rhead{Notes}
+\lhead{Title}
+\renewcommand{\headrulewidth}{1pt}
+\renewcommand{\footrulewidth}{1pt}
+
+% Document Body:
+\begin{multicols*}{2}
+  \section{Introduction}
+  \section{CPU Reference}
+  \subsection{Kernel References}
+  \subsection{Performance}
+  \section{GPU}
+  \subsection{Kernels}
+  \subsection{Kernel merge}
+  \subsection{Max value search (reduction)}
+  \section{Conclusion}
+\end{multicols*}
+\end{document}

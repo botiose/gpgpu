@@ -13,7 +13,8 @@ sobelImage(const uint8_t* a,
            const unsigned int poolSize,
            const unsigned int pooledWidth,
            uint32_t* pooledX,
-           uint32_t* pooledY);
+           uint32_t* pooledY
+           );
 
 void
 computeResponse(const uint32_t* pooledY,

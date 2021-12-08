@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <algorithm>
+#include <iostream>
 
 #include "kernel.hh"
 
@@ -31,18 +32,19 @@ sobelImage(const uint8_t* a,
            uint32_t* pooledY) {
   for (int x = 1; x < w - 1; x++) {
     for (int y = 1; y < h - 1; y++) {
-      int px = x / poolSize;
-      int py = y / poolSize;
-
       int dx = abs(-1 * idx(a, w, x - 1, y - 1) + -2 * idx(a, w, x - 1, y) +
                    -1 * idx(a, w, x - 1, y + 1) + idx(a, w, x + 1, y - 1) +
                    2 * idx(a, w, x + 1, y) + idx(a, w, x + 1, y + 1));
       int dy = abs(idx(a, w, x - 1, y - 1) + 2 * idx(a, w, x, y - 1) +
                    idx(a, w, x + 1, y - 1) + -1 * idx(a, w, x - 1, y + 1) +
                    -2 * idx(a, w, x, y + 1) + -1 * idx(a, w, x + 1, y + 1));
+      int px = x / poolSize;
+      int py = y / poolSize;
 
       *(pooledX + px + py * pooledWidth) += dx;
       *(pooledY + px + py * pooledWidth) += dy;
+
+      // *(pooledX + px + py * pooledWidth) += *(a + x + y * w);
     }
   }
 }
@@ -55,10 +57,12 @@ computeResponse(const uint32_t* pooledY,
                 uint32_t* pooledX) {
   for (int x = 0; x < pooledWidth; x++) {
     for (int y = 0; y < pooledHeight; y++) {
-      int d = *(pooledX + x + y * pooledWidth) / poolSize -
-              *(pooledY + x + y * pooledWidth) / poolSize;
+      int d = *(pooledX + x + y * pooledWidth) / (poolSize * poolSize) -
+              *(pooledY + x + y * pooledWidth) / (poolSize * poolSize);
 
       *(pooledX + x + y * pooledWidth) = d < 0 ? 0 : d;
+
+      // *(pooledX + x + y * pooledWidth) /= poolSize * poolSize;
     }
   }
 }
