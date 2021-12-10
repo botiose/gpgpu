@@ -60,11 +60,18 @@ add_custom_target(run-cpu
   DEPENDS etc-link gpgpu-cpu
   )
 
-add_custom_target(run-profile-cpu
+add_custom_target(profile-cpu
   COMMAND printf %37sOUTPUT%37s\\\\n | tr " " "="
   COMMAND valgrind --tool=callgrind --collect-systime=yes --separate-threads=yes --instr-atstart=no ./bin/gpgpu-cpu etc/data/00.jpg etc/data/result-cpu.jpg
   COMMAND printf %80s\\\\n | tr " " "="
   DEPENDS etc-link gpgpu-cpu
+  )
+
+add_custom_target(profile-gpu
+  COMMAND printf %37sOUTPUT%37s\\\\n | tr " " "="
+  COMMAND sudo nvprof -f --analysis-metrics -o  gpgpu-analysis.nvprof ./bin/gpgpu-gpu etc/data/00.jpg etc/data/result-cpu.jpg
+  COMMAND printf %80s\\\\n | tr " " "="
+  DEPENDS etc-link gpgpu-gpu
   )
 
 set_property(TARGET gpgpu-gpu PROPERTY CUDA_SEPARABLE_COMPILATION ON)
