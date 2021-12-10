@@ -18,7 +18,7 @@
 
 int
 main(int argc, char** argv) {
-  CALLGRIND_START_INSTRUMENTATION;
+
   if (argc != 3) {
     std::cerr << "Usage: gpgpu <src-image.jpb> <dst-image.png>" << std::endl;
     exit(1);
@@ -30,6 +30,7 @@ main(int argc, char** argv) {
 
   uint8_t* gray = (uint8_t*)malloc(sizeof(uint8_t) * width * height);
 
+  CALLGRIND_START_INSTRUMENTATION;
   grayscale(rgb, width, height, gray);
 
   stbi_image_free(rgb);
@@ -85,6 +86,7 @@ main(int argc, char** argv) {
 
   // Threshold the image by 50%.
   threshold(pooledWidth, pooledHeight, maxVal, dilatated);
+  CALLGRIND_STOP_INSTRUMENTATION;
 
   uint8_t* result = (uint8_t*)malloc(sizeof(uint8_t) * (pooledWidth * pooledHeight));
 
@@ -95,5 +97,5 @@ main(int argc, char** argv) {
   stbi_write_jpg(argv[2], pooledWidth, pooledHeight, 1, dilatated, 100);
 
   free(dilatated);
-  CALLGRIND_STOP_INSTRUMENTATION;
+
 }
