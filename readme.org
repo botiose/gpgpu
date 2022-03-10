@@ -1,0 +1,7 @@
+* CUDA Bardcode Detector
+  This project is an implementation of a barcode detector. The program takes an
+  image containing a barcode as input, and it outputs another image highlighting 
+  the area in the image in which the barcode was detected.
+
+  There are two implementation off the program, one in C++ and one in CUDA. The
+  C++ version served as baseline for the CUDA implementation.
